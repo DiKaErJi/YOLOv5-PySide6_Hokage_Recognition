@@ -14,7 +14,7 @@
 
 确保你的环境中安装了以下依赖项：
 
-- *Python 3.*8
+- **Python 3.8**
 - **PyTorch**：用于YOLOv5模型的训练和推理。
 - **PySide6**：用于制作GUI界面。
 - **其他依赖项**：参考YOLOv5项目的安装要求，如NumPy、OpenCV等。
