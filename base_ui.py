@@ -59,24 +59,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return convert2QImage(image)  # 转换为QImage并返回
 
     # 方法：处理打开和处理图像的操作
-    def open_image(self):   # 响应用户点击检测图片按钮
+    def open_image(self):
         print("点击了检测图片！")
-        self.timer.stop()  # 停止计时器（如果正在运行）
-
-        # QFileDialog.getOpenFileName() 打开一个文件对话框
-        # self 表示父窗口（即 MainWindow 实例），dir 参数指定了初始目录，filter 参数指定了可选择的文件类型
+        self.timer.stop()
         file_path = QFileDialog.getOpenFileName(self, dir="./datasets/images/train", filter="*.jpg;*.png;*.jpeg")
-
-        #
-        if file_path[0]:  # 如果选择了文件
-            file_path = file_path[0]  # 获取文件路径
-            qimage = self.image_pred(file_path)  # 获取处理后的图像
-
-            # self.input 是一个label控件,Pixmap(file_path)创建一个QPixmap对象,从file_path加载，setPixmap 方法将 QPixmap 对象设置为 self.input 控件的图像内容
-            self.input.setPixmap(QPixmap(file_path))  # 显示原始图像
-
-            # qimage 是经过处理后的图像数据，它是一个QImage对象，QPixmap.fromImage(qimage) 将 QImage 对象 qimage 转换为 QPixmap 对象，这是因为 QPixmap 更适合在 Qt GUI 中显示和处理
-            self.output.setPixmap(QPixmap.fromImage(qimage))  # 显示处理后的图像
+        if file_path[0]:
+            file_path = file_path[0]
+            qimage = self.image_pred(file_path)
+            self.input.setPixmap(QPixmap(file_path))
+            self.output.setPixmap(QPixmap.fromImage(qimage))
 
     def video_pred(self):   # 处理和显示视频帧
 
@@ -110,17 +101,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.video = cv2.VideoCapture(file_path)  # 打开视频文件
             self.timer.start()  # 启动计时器
 
-    def quit(self):     # 处理退出程序操作
-
-        print("点击了退出程序！")
-        sys.exit(0)  # 退出应用程序
+    # def quit(self):     # 处理退出程序操作
+    #
+    #     print("点击了退出程序！")
+    #     sys.exit(0)  # 退出应用程序
 
     # 方法：将槽函数绑定到各自的信号（事件）
     def bind_slots(self):
 
-        self.detect_image.clicked.connect(self.open_image)  # 将open_image绑定到detect_image按钮点击事件
-        self.detect_video.clicked.connect(self.open_video)  # 将open_video绑定到detect_video按钮点击事件
-        self.exit.clicked.connect(self.quit)  # 将quit绑定到exit按钮点击事件
+        self.det_image.clicked.connect(self.open_image)  # 将open_image绑定到detect_image按钮点击事件
+        self.det_video.clicked.connect(self.open_video)  # 将open_video绑定到detect_video按钮点击事件
+        # self.exit.clicked.connect(self.quit)  # 将quit绑定到exit按钮点击事件
 
         # timeout 是 QTimer 的信号，表示计时器超时事件
         self.timer.timeout.connect(self.video_pred)  # 将video_pred绑定到计时器超时事件
