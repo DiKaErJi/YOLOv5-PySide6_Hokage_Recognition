@@ -4,6 +4,7 @@ import os
 import cv2  # OpenCV库，用于视频和图像处理
 import sys  # 系统特定的参数和函数
 import torch  # PyTorch库，用于深度学习
+from PIL import Image  # Pillow库，用于图像格式转换
 from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog  # PySide6库，用于GUI组件
 from PySide6.QtGui import QPixmap, QImage  # PySide6库，用于在GUI中处理图像
 from PySide6.QtCore import QTimer  # PySide6库，用于计时事件
@@ -19,6 +20,16 @@ def convert2QImage(img):    # 将一个OpenCV格式的图像（一般是NumPy数
     # 转换并返回QImage格式，创建QImage对象的参数中width * channel是每行图像数据的字节数，每行字节数 = 图像宽度（像素数） * 每个像素的字节数（通道数）
     # 最后一个参数指定图像的格式
     return QImage(img, width, height, width * channel, QImage.Format_RGB888)
+
+# 定义函数将JPEG图像转换为PNG格式
+def convert_jpeg_to_png(file_path):
+    if file_path.lower().endswith(('.jpg', '.jpeg')):
+        # 打开JPEG图像并转换为PNG格式
+        with Image.open(file_path) as img:
+            new_file_path = file_path.rsplit('.', 1)[0] + '.png'
+            img.save(new_file_path)
+            return new_file_path
+    return file_path
 
 # 定义主窗口类，继承自QMainWindow和UI布局
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -65,8 +76,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         file_path = QFileDialog.getOpenFileName(self, dir="./datasets/images/train", filter="*.jpg;*.png;*.jpeg")
         if file_path[0]:
             file_path = file_path[0]
+            print(f"Selected file path: {file_path}")  # 打印文件路径，确保路径正确
+            if not os.path.isabs(file_path):
+                file_path = os.path.abspath(file_path)
+            # 将路径转换为使用反斜杠
+            file_path = file_path.replace('/', '\\')
+
+            if not os.path.exists(file_path):
+                print(f"File does not exist: {file_path}")
+                return
+
+            if not os.access(file_path, os.R_OK):
+                print(f"File is not readable: {file_path}")
+                return
+
+            # 转换JPEG图像为PNG格式
+            file_path = convert_jpeg_to_png(file_path)
+
+            pixmap = QPixmap(file_path)
+            if pixmap.isNull():
+                print(f"Failed to load image from {file_path}")
+            else:
+                self.input.setPixmap(pixmap)
+
             qimage = self.image_pred(file_path)
-            self.input.setPixmap(QPixmap(file_path))
             self.output.setPixmap(QPixmap.fromImage(qimage))
 
     def video_pred(self):   # 处理和显示视频帧
