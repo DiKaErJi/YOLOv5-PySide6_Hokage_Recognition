@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # 导入必要的库
+from PySide6.QtCore import Qt
 import os
 import cv2  # OpenCV库，用于视频和图像处理
 import sys  # 系统特定的参数和函数
@@ -37,6 +38,8 @@ class MainWindow(QMainWindow, Ui_mainWindow):
     def __init__(self):     # 初始化 MainWindow 类的实例，加载自定义 YOLOv5 模型，创建和配置一个定时器，初始化视频捕获对象，绑定信号槽函数
         super(MainWindow, self).__init__()  # 初始化父类
         self.setupUi(self)  # 设置UI布局
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
+        self.setFixedSize(self.size())  # 设置固定大小
 
         # self.model 是在 MainWindow 类的构造函数中初始化的模型对象
         # torch.hub.load 是 PyTorch 提供的一个函数，用于从模型库中加载模型。它可以从本地或在线的 PyTorch Hub 加载预训练模型或自定义模型
