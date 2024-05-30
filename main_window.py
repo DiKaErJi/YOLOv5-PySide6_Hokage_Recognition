@@ -18,13 +18,21 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QFrame, QLabel, QMainWindow,
     QPushButton, QSizePolicy, QStatusBar, QWidget)
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        if not MainWindow.objectName():
-            MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(776, 339)
-        self.centralwidget = QWidget(MainWindow)
+class Ui_mainWindow(object):
+    def setupUi(self, mainWindow):
+        if not mainWindow.objectName():
+            mainWindow.setObjectName(u"mainWindow")
+        mainWindow.resize(776, 394)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(mainWindow.sizePolicy().hasHeightForWidth())
+        mainWindow.setSizePolicy(sizePolicy)
+        mainWindow.setMinimumSize(QSize(0, 0))
+        self.centralwidget = QWidget(mainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
+        sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
+        self.centralwidget.setSizePolicy(sizePolicy)
         self.input = QLabel(self.centralwidget)
         self.input.setObjectName(u"input")
         self.input.setGeometry(QRect(30, 20, 331, 201))
@@ -46,21 +54,25 @@ class Ui_MainWindow(object):
         self.det_video = QPushButton(self.centralwidget)
         self.det_video.setObjectName(u"det_video")
         self.det_video.setGeometry(QRect(420, 260, 331, 41))
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QStatusBar(MainWindow)
+        self.exit = QPushButton(self.centralwidget)
+        self.exit.setObjectName(u"exit")
+        self.exit.setGeometry(QRect(230, 320, 321, 41))
+        mainWindow.setCentralWidget(self.centralwidget)
+        self.statusbar = QStatusBar(mainWindow)
         self.statusbar.setObjectName(u"statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        mainWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
+        self.retranslateUi(mainWindow)
 
-        QMetaObject.connectSlotsByName(MainWindow)
+        QMetaObject.connectSlotsByName(mainWindow)
     # setupUi
 
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.input.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u539f\u59cb\u56fe\u7247", None))
-        self.output.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u68c0\u6d4b\u7ed3\u679c", None))
-        self.det_image.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u7247\u68c0\u6d4b", None))
-        self.det_video.setText(QCoreApplication.translate("MainWindow", u"\u89c6\u9891\u68c0\u6d4b", None))
+    def retranslateUi(self, mainWindow):
+        mainWindow.setWindowTitle(QCoreApplication.translate("mainWindow", u"\u706b\u5f71\u68c0\u6d4b\u5668", None))
+        self.input.setText(QCoreApplication.translate("mainWindow", u"\u663e\u793a\u539f\u59cb\u56fe\u7247", None))
+        self.output.setText(QCoreApplication.translate("mainWindow", u"\u663e\u793a\u68c0\u6d4b\u7ed3\u679c", None))
+        self.det_image.setText(QCoreApplication.translate("mainWindow", u"\u56fe\u7247\u68c0\u6d4b", None))
+        self.det_video.setText(QCoreApplication.translate("mainWindow", u"\u89c6\u9891\u68c0\u6d4b", None))
+        self.exit.setText(QCoreApplication.translate("mainWindow", u"\u9000\u51fa\u7a0b\u5e8f", None))
     # retranslateUi
 

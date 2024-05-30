@@ -8,7 +8,7 @@ from PIL import Image  # Pillow库，用于图像格式转换
 from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog  # PySide6库，用于GUI组件
 from PySide6.QtGui import QPixmap, QImage  # PySide6库，用于在GUI中处理图像
 from PySide6.QtCore import QTimer  # PySide6库，用于计时事件
-from main_window import Ui_MainWindow# 导入由Qt Designer生成的主窗口布局
+from main_window import Ui_mainWindow   # 导入由Qt Designer生成的主窗口布局
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = r'D:\software\Anaconda\envs\yolov5\Lib\site-packages\PySide6\plugins\platforms'# 设置Qt平台插件路径的环境变量
 
 # 定义函数将OpenCV图像转换为QImage
@@ -32,7 +32,7 @@ def convert_jpeg_to_png(file_path):
     return file_path
 
 # 定义主窗口类，继承自QMainWindow和UI布局
-class MainWindow(QMainWindow, Ui_MainWindow):
+class MainWindow(QMainWindow, Ui_mainWindow):
 
     def __init__(self):     # 初始化 MainWindow 类的实例，加载自定义 YOLOv5 模型，创建和配置一个定时器，初始化视频捕获对象，绑定信号槽函数
         super(MainWindow, self).__init__()  # 初始化父类
@@ -71,36 +71,47 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # 方法：处理打开和处理图像的操作
     def open_image(self):
-        print("点击了检测图片！")
-        self.timer.stop()
+        print("点击了检测图片！")  # 打印信息，用于调试和确认点击事件是否触发
+        self.timer.stop()  # 停止计时器，以防止视频仍在播放
+
+        # 打开文件对话框，让用户选择要打开的图像文件
         file_path = QFileDialog.getOpenFileName(self, dir="./datasets/images/train", filter="*.jpg;*.png;*.jpeg")
+
+        # 确保用户选择了文件并获取文件路径
         if file_path[0]:
-            file_path = file_path[0]
+            file_path = file_path[0]  # 获取文件路径
             print(f"Selected file path: {file_path}")  # 打印文件路径，确保路径正确
+
+            # 如果文件路径不是绝对路径，则转换为绝对路径
             if not os.path.isabs(file_path):
                 file_path = os.path.abspath(file_path)
-            # 将路径转换为使用反斜杠
+
+            # 将路径转换为使用反斜杠（Windows路径格式）
             file_path = file_path.replace('/', '\\')
 
+            # 检查文件是否存在
             if not os.path.exists(file_path):
-                print(f"File does not exist: {file_path}")
+                print(f"File does not exist: {file_path}")  # 如果文件不存在，打印错误信息
                 return
 
+            # 检查文件是否可读
             if not os.access(file_path, os.R_OK):
-                print(f"File is not readable: {file_path}")
+                print(f"File is not readable: {file_path}")  # 如果文件不可读，打印错误信息
                 return
 
-            # 转换JPEG图像为PNG格式
+            # 将JPEG图像转换为PNG格式，因为模型处理的是PNG格式的图像
             file_path = convert_jpeg_to_png(file_path)
 
-            pixmap = QPixmap(file_path)
-            if pixmap.isNull():
-                print(f"Failed to load image from {file_path}")
+            # 加载图像并显示在输入框中
+            pixmap = QPixmap(file_path)  # 创建一个QPixmap对象，用于加载图像文件
+            if pixmap.isNull():  # 检查图像是否成功加载
+                print(f"Failed to load image from {file_path}")  # 如果图像加载失败，打印错误信息
             else:
-                self.input.setPixmap(pixmap)
+                self.input.setPixmap(pixmap)  # 将加载的图像显示在输入框中
 
-            qimage = self.image_pred(file_path)
-            self.output.setPixmap(QPixmap.fromImage(qimage))
+            # 对打开的图像进行目标检测，并将处理后的结果显示在输出框中
+            qimage = self.image_pred(file_path)  # 调用image_pred函数进行目标检测
+            self.output.setPixmap(QPixmap.fromImage(qimage))  # 将处理后的图像显示在输出框中
 
     def video_pred(self):   # 处理和显示视频帧
 
@@ -134,17 +145,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.video = cv2.VideoCapture(file_path)  # 打开视频文件
             self.timer.start()  # 启动计时器
 
-    # def quit(self):     # 处理退出程序操作
-    #
-    #     print("点击了退出程序！")
-    #     sys.exit(0)  # 退出应用程序
+    def quit(self):     # 处理退出程序操作
+
+        print("点击了退出程序！")
+        sys.exit(0)  # 退出应用程序
 
     # 方法：将槽函数绑定到各自的信号（事件）
     def bind_slots(self):
 
         self.det_image.clicked.connect(self.open_image)  # 将open_image绑定到detect_image按钮点击事件
         self.det_video.clicked.connect(self.open_video)  # 将open_video绑定到detect_video按钮点击事件
-        # self.exit.clicked.connect(self.quit)  # 将quit绑定到exit按钮点击事件
+        self.exit.clicked.connect(self.quit)  # 将quit绑定到exit按钮点击事件
 
         # timeout 是 QTimer 的信号，表示计时器超时事件
         self.timer.timeout.connect(self.video_pred)  # 将video_pred绑定到计时器超时事件
